@@ -4,11 +4,15 @@ const Intern = require('./lib/Intern');
 const inquirer = require('inquirer');
 const path = require('path');
 const fs = require('fs');
+const util = require("util");
+
 
 const OUTPUT_DIR = path.resolve(__dirname, 'output');
 const outputPath = path.join(OUTPUT_DIR, 'team.html');
 
 const render = require('./lib/htmlRenderer');
+
+const writeFileAsync = util.promisify(fs.writeFile);
 
 
 // Write code to use inquirer to gather information about the development team members,
@@ -86,7 +90,7 @@ const internInfo = [
 let employees = [];
 
 const enterAnotherEmployee = () => {
-    inquirer
+    return inquirer
       .prompt([
         {
           type: "confirm",
@@ -97,8 +101,8 @@ const enterAnotherEmployee = () => {
       .then(val => {
         // If the user says yes to another game, play again, otherwise quit the game
         if (val.choice) {
-          promptTeamInfo();
-        } 
+          return promptTeamInfo();
+        }
       });
 }
 
@@ -109,18 +113,15 @@ const promptTeamInfo = () => {
                 return inquirer.prompt([...employeeInfo, ...engineerInfo])
                 .then(data => {
                     employees.push(new Engineer(data.name, data.id, data.email, data.github))
+                    return enterAnotherEmployee();
                 })
-                .then(() => {
-                    enterAnotherEmployee();
-                });
+                
             }
             if (data.role === 'intern') {
                 return inquirer.prompt([...employeeInfo, ...internInfo])
                 .then(data => {
                     employees.push(new Intern(data.name, data.id, data.email, data.school))
-                })
-                .then(() => {
-                    enterAnotherEmployee();
+                    return enterAnotherEmployee();
                 });
             }
         })
@@ -129,43 +130,49 @@ const promptTeamInfo = () => {
 const promptUser = () => {
     return inquirer.prompt(managerInfo)
     .then(data => {
-        employees.push(new Manager(data.name, data.id, data.email, data.office));
+        employees.push(new Manager(data.name, data.id, data.email, data.office))
+        return promptTeamInfo()
     })
-    .then(() => {
-        promptTeamInfo();
+    .then(function() {
+        const teamHTML = render(employees);
+        writeFileAsync(outputPath, teamHTML);
     })
+    .catch(function(err) {
+        console.log(err);
+    });
 }
 
-
-
-
-
-
 promptUser();
-// const promptUser = () => {
-//     return inquirer.prompt(employeeInfo)
-//     .then(data => {
-//         if (data.role === 'manager') {
-//             return inquirer.prompt([managerInfo])
-//             .then(input => {
-//                 employees.push(new Manager(input.name, input.id, input.email, input.office))
-//             })
-//             .then(() => {
-//                 console.log(employees);
-//             });
-//         } else if (data.role === 'engineer') {
-//             return inquirer.prompt([engineerInfo]);
-//         } else {
-//             return inquirer.prompt([internInfo]);
-//         }
+
+// async function writeHTML() {
+//     try {
+//       await promptUser();
+
+//       const teamHTML = render(employees);
+
+//       fs.writeFile(outputPath, teamHTML);
+
+//     } catch (err) {
+//       console.log(err);
+//     }
+//   }
+
+//   writeHTML();
+
+// function init() {
+//     promptUser()
+//     .then(() => {
+//         const team = render(employees);
+//         writeFileAsync(outputPath, team);
 //     })
 // }
 
-
+// init();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
+
 
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
