@@ -99,7 +99,6 @@ const enterAnotherEmployee = () => {
         }
       ])
       .then(val => {
-        // If the user says yes to another game, play again, otherwise quit the game
         if (val.choice) {
           return promptTeamInfo();
         }
@@ -144,43 +143,4 @@ const promptUser = () => {
 
 promptUser();
 
-// async function writeHTML() {
-//     try {
-//       await promptUser();
-
-//       const teamHTML = render(employees);
-
-//       fs.writeFile(outputPath, teamHTML);
-
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   }
-
-//   writeHTML();
-
-// function init() {
-//     promptUser()
-//     .then(() => {
-//         const team = render(employees);
-//         writeFileAsync(outputPath, team);
-//     })
-// }
-
-// init();
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
 
