@@ -14,13 +14,35 @@ const render = require('./lib/htmlRenderer');
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
+const managerInfo = [
+    {
+        type: 'input',
+        name: 'name',
+        message: 'What is your name?'
+    }, 
+    {
+        type: 'input',
+        name: 'id',
+        message: 'What is your your Employee ID?'
+    }, 
+    {
+        type: 'input',
+        name: 'email',
+        message: 'What is your email address?'
+    },
+    {
+        type: 'input',
+        name: 'office',
+        message: 'What is your office number?'
+    }
+]
+
 const whichRole = [
     {
         type: 'list',
         name: 'role',
-        message: 'Employee\'s position:',
+        message: 'Please select the position of the employee whose info you\'d like to input:',
         choices: [
-            'manager',
             'engineer',
             'intern'
         ]
@@ -42,14 +64,6 @@ const employeeInfo = [
         type: 'input',
         name: 'email',
         message: 'Employee\'s email address:'
-    }
-]
-
-const managerInfo = [
-    {
-        type: 'input',
-        name: 'office',
-        message: 'Manger\'s office number:'
     }
 ]
 
@@ -77,49 +91,55 @@ const enterAnotherEmployee = () => {
         {
           type: "confirm",
           name: "choice",
-          message: "Enter in info for another employee?"
+          message: "Would you like to enter in info for another employee?"
         }
       ])
       .then(val => {
         // If the user says yes to another game, play again, otherwise quit the game
         if (val.choice) {
-          promptUser();
+          promptTeamInfo();
         } 
       });
 }
 
-const promptUser = () => {
+const promptTeamInfo = () => {
     return inquirer.prompt(whichRole)
+        .then(data => {
+            if (data.role === 'engineer') {
+                return inquirer.prompt([...employeeInfo, ...engineerInfo])
+                .then(data => {
+                    employees.push(new Engineer(data.name, data.id, data.email, data.github))
+                })
+                .then(() => {
+                    enterAnotherEmployee();
+                });
+            }
+            if (data.role === 'intern') {
+                return inquirer.prompt([...employeeInfo, ...internInfo])
+                .then(data => {
+                    employees.push(new Intern(data.name, data.id, data.email, data.school))
+                })
+                .then(() => {
+                    enterAnotherEmployee();
+                });
+            }
+        })
+}
+
+const promptUser = () => {
+    return inquirer.prompt(managerInfo)
     .then(data => {
-        if (data.role === 'manager') {
-            return inquirer.prompt([...employeeInfo, ...managerInfo])
-            .then(data => {
-                employees.push(new Manager(data.name, data.id, data.email, data.office))
-            })
-            .then(() => {
-                enterAnotherEmployee();
-            });
-        }
-        if (data.role === 'engineer') {
-            return inquirer.prompt([...employeeInfo, ...engineerInfo])
-            .then(data => {
-                employees.push(new Engineer(data.name, data.id, data.email, data.github))
-            })
-            .then(() => {
-                enterAnotherEmployee();
-            });
-        }
-        if (data.role === 'intern') {
-            return inquirer.prompt([...employeeInfo, ...internInfo])
-            .then(data => {
-                employees.push(new Intern(data.name, data.id, data.email, data.school))
-            })
-            .then(() => {
-                enterAnotherEmployee();
-            });
-        }
+        employees.push(new Manager(data.name, data.id, data.email, data.office));
+    })
+    .then(() => {
+        promptTeamInfo();
     })
 }
+
+
+
+
+
 
 promptUser();
 // const promptUser = () => {
