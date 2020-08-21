@@ -13,6 +13,20 @@ const render = require('./lib/htmlRenderer');
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+
+const whichRole = [
+    {
+        type: 'list',
+        name: 'role',
+        message: 'Employee\'s position:',
+        choices: [
+            'manager',
+            'engineer',
+            'intern'
+        ]
+    }
+]
+
 const employeeInfo = [
     {
         type: 'input',
@@ -28,54 +42,107 @@ const employeeInfo = [
         type: 'input',
         name: 'email',
         message: 'Employee\'s email address:'
-    },
-    {
-        type: 'list',
-        name: 'role',
-        message: 'Employee\'s position:',
-        choices: [
-            'manager',
-            'engineer',
-            'intern'
-        ]
     }
 ]
 
-const managerInfo = 
-{
-    type: 'input',
-    name: 'office',
-    message: 'Manger\'s office number:'
+const managerInfo = [
+    {
+        type: 'input',
+        name: 'office',
+        message: 'Manger\'s office number:'
+    }
+]
+
+const engineerInfo = [
+    {
+        type: 'input',
+        name: 'github',
+        message: 'Employee\'s github username:'
+    }
+]
+
+const internInfo = [
+    {
+        type: 'input',
+        name: 'school',
+        message: 'School attending:'
+    }
+]
+
+let employees = [];
+
+const enterAnotherEmployee = () => {
+    inquirer
+      .prompt([
+        {
+          type: "confirm",
+          name: "choice",
+          message: "Enter in info for another employee?"
+        }
+      ])
+      .then(val => {
+        // If the user says yes to another game, play again, otherwise quit the game
+        if (val.choice) {
+          promptUser();
+        } 
+      });
 }
 
-const engineerInfo = 
-{
-    type: 'input',
-    name: 'github',
-    message: 'Employee\'s github username:'
-}
-
-const internInfo = 
-{
-    type: 'input',
-    name: 'school',
-    message: 'School attending:'
-}
-
-function promptUser() {
-    return inquirer.prompt(employeeInfo)
+const promptUser = () => {
+    return inquirer.prompt(whichRole)
     .then(data => {
         if (data.role === 'manager') {
-            return inquirer.prompt([managerInfo]);
-        } else if (data.role === 'engineer') {
-            return inquirer.prompt([engineerInfo]);
-        } else {
-            return inquirer.prompt([internInfo]);
+            return inquirer.prompt([...employeeInfo, ...managerInfo])
+            .then(data => {
+                employees.push(new Manager(data.name, data.id, data.email, data.office))
+            })
+            .then(() => {
+                enterAnotherEmployee();
+            });
+        }
+        if (data.role === 'engineer') {
+            return inquirer.prompt([...employeeInfo, ...engineerInfo])
+            .then(data => {
+                employees.push(new Engineer(data.name, data.id, data.email, data.github))
+            })
+            .then(() => {
+                enterAnotherEmployee();
+            });
+        }
+        if (data.role === 'intern') {
+            return inquirer.prompt([...employeeInfo, ...internInfo])
+            .then(data => {
+                employees.push(new Intern(data.name, data.id, data.email, data.school))
+            })
+            .then(() => {
+                enterAnotherEmployee();
+            });
         }
     })
 }
 
 promptUser();
+// const promptUser = () => {
+//     return inquirer.prompt(employeeInfo)
+//     .then(data => {
+//         if (data.role === 'manager') {
+//             return inquirer.prompt([managerInfo])
+//             .then(input => {
+//                 employees.push(new Manager(input.name, input.id, input.email, input.office))
+//             })
+//             .then(() => {
+//                 console.log(employees);
+//             });
+//         } else if (data.role === 'engineer') {
+//             return inquirer.prompt([engineerInfo]);
+//         } else {
+//             return inquirer.prompt([internInfo]);
+//         }
+//     })
+// }
+
+
+
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
