@@ -1,0 +1,45 @@
+body {
+    background-image: url(https://res.cloudinary.com/fleetnation/image/private/c_fit,w_1120/g_south,l_text:style_gothic2:%C2%A9%20Christopher%20PB,o_20,y_10/g_center,l_watermark4,o_25,y_50/v1528303127/x1hwppiqjhijrq07ojnw.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: rgb(97, 97, 97);
+}
+
+/* h1 {
+    color: rgb(255, 255, 255);
+} */
+
+a {
+    color: rgb(97, 97, 97);
+    text-decoration: none;
+}
+
+a:hover {
+    color: rgb(158, 155, 155);
+    text-decoration: none;
+}
+
+.team-heading {
+    background-color: transparent;
+    background-image: linear-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+.employee-card {
+    background-color: rgba(226, 194, 241, .85);
+    border: 2px rgb(255, 255, 255) solid;
+    margin: 10px;
+}
+
+.card-header {
+    background-color: rgba(255, 255, 255, .9);
+    text-align: center;
+}
+
+.card-body {
+    background-color: transparent;
+}
+
+.list-group-item {
+    background: transparent;
+    border: none;
+}

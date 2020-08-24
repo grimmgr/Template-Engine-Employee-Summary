@@ -5,6 +5,8 @@ const inquirer = require('inquirer');
 const path = require('path');
 const fs = require('fs');
 const util = require("util");
+const open = require('open');
+
 
 
 const OUTPUT_DIR = path.resolve(__dirname, 'output');
@@ -13,10 +15,6 @@ const outputPath = path.join(OUTPUT_DIR, 'team.html');
 const render = require('./lib/htmlRenderer');
 
 const writeFileAsync = util.promisify(fs.writeFile);
-
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
 
 const managerInfo = [
     {
@@ -101,6 +99,8 @@ const enterAnotherEmployee = () => {
       .then(val => {
         if (val.choice) {
           return promptTeamInfo();
+        } else {
+            open('output/team.html');
         }
       });
 }
