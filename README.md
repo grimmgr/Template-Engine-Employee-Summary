@@ -1,4 +1,4 @@
-# Template-Engine-Employee-Summary
+# Template Engine Employee Summary
 
 A NODE CLI app for managers to quickly input and see info about their team.  Manager's input basic info about their employees, and an html page is generated to display the info.
 
